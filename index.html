@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#18181b">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Flor Strength + Sculpt</title>
+<style>
+:root{
+  --bg:#f7f7f8; --card:#fff; --text:#18181b; --muted:#71717a; --line:#e4e4e7;
+  --dark:#18181b; --soft:#f1f1f3; --good:#166534; --amber:#a16207; --red:#991b1b;
+  --radius:18px;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.shell{max-width:1040px;margin:auto;padding:16px 16px 100px}
+.top{padding:8px 2px 14px}
+.kicker{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+h1{margin:3px 0 0;font-size:28px;line-height:1.1}
+h2{margin:0 0 10px;font-size:21px}
+h3{margin:0;font-size:16px}
+p{line-height:1.45}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.025)}
+.stack{display:grid;gap:12px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.space{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.small{font-size:12px;color:var(--muted)}
+.muted{color:var(--muted)}
+.badge{display:inline-flex;align-items:center;border-radius:999px;padding:5px 9px;background:var(--soft);font-size:11px;font-weight:700;margin:3px 4px 0 0}
+.badge.strength{background:#eceef1}
+.badge.sculpt{background:#f7efe5}
+.badge.conditioning{background:#eef5f0}
+.badge.core{background:#f3eff7}
+.btn{border:0;border-radius:12px;background:var(--dark);color:#fff;padding:11px 14px;font-weight:750}
+.btn.secondary{background:var(--soft);color:var(--text)}
+.btn.ghost{background:#fff;color:var(--text);border:1px solid var(--line)}
+.btn.smallbtn{padding:8px 10px;font-size:12px}
+.btn.good{background:var(--good)}
+.btn.red{background:var(--red)}
+label{font-size:12px;color:var(--muted);font-weight:650;display:flex;flex-direction:column;gap:5px}
+input,select{width:100%;border:1px solid #d4d4d8;background:#fff;border-radius:11px;padding:10px;color:var(--text)}
+input[type=checkbox]{width:22px;height:22px}
+.hero{background:var(--dark);color:#fff;border:0}
+.hero .muted,.hero .small{color:#d4d4d8}
+.hero .badge{background:#2c2c31;color:#fff}
+.metric{font-size:28px;font-weight:850;letter-spacing:-.03em}
+.exercise{padding:0;overflow:hidden}
+.ex-head{padding:15px}
+.ex-body{border-top:1px solid var(--line);padding:12px 15px 15px}
+.previous{background:#fafafa;border:1px dashed var(--line);border-radius:12px;padding:9px 10px;margin-top:9px}
+.set-head,.set-row{display:grid;grid-template-columns:38px 1fr 1fr 1fr 38px;gap:7px;align-items:center}
+.set-head{font-size:10px;color:var(--muted);font-weight:750;margin:0 0 6px;padding:0 2px}
+.set-row{margin:7px 0}
+.set-row input{padding:9px}
+.check{display:flex;align-items:center;justify-content:center}
+.done{opacity:.55}
+.done input:not([type=checkbox]){text-decoration:line-through}
+.timer{position:sticky;top:8px;z-index:12;background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px 14px;box-shadow:0 8px 30px rgba(0,0,0,.09);display:none;margin-bottom:12px}
+.timer.active{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.timer-num{font-size:26px;font-weight:850;font-variant-numeric:tabular-nums}
+.nav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.96);backdrop-filter:blur(14px);border-top:1px solid var(--line);z-index:20;padding:8px 8px calc(8px + env(safe-area-inset-bottom))}
+.nav-inner{max-width:1040px;margin:auto;display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.nav button{border:0;background:transparent;padding:8px 4px;border-radius:10px;color:var(--muted);font-size:11px;font-weight:750}
+.nav button.active{background:var(--soft);color:var(--text)}
+.panel{display:none}.panel.active{display:block}
+.bar{height:10px;border-radius:999px;background:#ececef;overflow:hidden}.bar span{display:block;height:100%;background:#71717a}
+.muscle-row{display:grid;grid-template-columns:120px 65px 75px 1fr;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:12px}
+.muscle-row:last-child{border-bottom:0}
+.section-label{font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin:16px 2px 8px}
+.timeline{border-left:2px solid var(--line);margin-left:8px;padding-left:16px}
+.timeline-item{position:relative;padding:0 0 16px}.timeline-item:before{content:"";position:absolute;width:9px;height:9px;border-radius:50%;background:var(--dark);left:-21px;top:5px}
+.notice{font-size:12px;padding:10px 12px;border-radius:12px;background:#fff7ed;color:#92400e}
+.success{background:#ecfdf5;color:#166534}
+hr{border:0;border-top:1px solid var(--line);margin:14px 0}
+a.ref{color:inherit;text-decoration:none}
+@media(max-width:620px){
+  .shell{padding-left:12px;padding-right:12px}
+  .muscle-row{grid-template-columns:95px 52px 60px 1fr}
+  .hide-mobile{display:none}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="top">
+    <div class="kicker">Home training</div>
+    <h1>Flor Strength + Sculpt</h1>
+  </div>
+
+  <div id="restTimer" class="timer">
+    <div>
+      <div class="small">Descanso</div>
+      <div class="timer-num" id="timerNum">01:00</div>
+    </div>
+    <div class="row">
+      <button class="btn secondary smallbtn" onclick="addTimer(15)">+15 s</button>
+      <button class="btn smallbtn" onclick="stopTimer()">Terminar</button>
+    </div>
+  </div>
+
+  <section id="today" class="panel active">
+    <div id="todayContent" class="stack"></div>
+  </section>
+
+  <section id="plan" class="panel">
+    <div class="card">
+      <h2>Plan semanal</h2>
+      <div class="small">Fuerza para progresar + bloques dinámicos para resistencia, acondicionamiento y variedad.</div>
+    </div>
+    <div id="planContent" class="stack" style="margin-top:12px"></div>
+  </section>
+
+  <section id="progress" class="panel">
+    <div class="grid">
+      <div class="card">
+        <label>Fecha de referencia<input id="progressDate" type="date"></label>
+        <div class="small" id="periodLabel" style="margin-top:8px"></div>
+      </div>
+      <div class="card"><div class="small">Sesiones semana</div><div class="metric" id="mSessions">0</div></div>
+      <div class="card"><div class="small">Volumen Strength semana</div><div class="metric" id="mStrength">0</div><div class="small">kg-reps</div></div>
+      <div class="card"><div class="small">Cardio / Conditioning</div><div class="metric" id="mCardio">0</div><div class="small">bloques registrados</div></div>
+    </div>
+
+    <div class="section-label">Prioridades semanales</div>
+    <div id="priorityCards" class="grid"></div>
+
+    <div class="section-label">Por grupo muscular · semana</div>
+    <div class="card" id="weekMuscles"></div>
+
+    <div class="section-label">Acumulado mensual</div>
+    <div class="card" id="monthMuscles"></div>
+
+    <div class="section-label">Mejores marcas</div>
+    <div class="card" id="prs"></div>
+  </section>
+
+  <section id="history" class="panel">
+    <div class="card"><h2>Historial</h2><div id="historyContent"></div></div>
+  </section>
+
+  <section id="data" class="panel">
+    <div class="card stack">
+      <div>
+        <h2>Cómo registrar</h2>
+        <p class="small">En ejercicios con dos mancuernas registra el <strong>peso total</strong> entre ambas. Ejemplo: 10 kg + 10 kg = 20 kg. En bandas o peso corporal puedes usar 0 kg; contarán para frecuencia y series, no para tonelaje.</p>
+      </div>
+      <div class="notice">Las “series estimadas” sirven para comparar tu propio volumen. Strength se pondera al 100%; Sculpt/Functional al 60%; Conditioning al 25%. No reemplaza la evaluación de esfuerzo, técnica o cercanía al fallo.</div>
+      <div class="row">
+        <button class="btn" id="exportBtn">Exportar respaldo</button>
+        <label class="btn secondary" style="display:inline-flex;justify-content:center">Importar respaldo
+          <input id="importFile" type="file" accept=".json" style="display:none">
+        </label>
+        <button class="btn red" id="clearBtn">Borrar registros</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <button class="active" data-tab="today">Hoy</button>
+    <button data-tab="plan">Plan</button>
+    <button data-tab="progress">Progreso</button>
+    <button data-tab="history">Historial</button>
+    <button data-tab="data">Datos</button>
+  </div>
+</nav>
+
+<script>
+const PROGRAM = [
+{
+ day:"Lunes", key:1, title:"Lower A · Glute + Quad", subtitle:"Glúteo prioritario + cuádriceps", duration:"60–65 min",
+ exercises:[
+  {name:"DB Hip Thrust / Glute Bridge", block:"Strength", sets:4, reps:"8–10", rest:90, muscles:{Glúteos:1,Isquios:.25}, url:"https://www.youtube.com/results?search_query=dumbbell+hip+thrust+proper+form"},
+  {name:"Bulgarian Split Squat · glute bias", block:"Strength", sets:3, reps:"8–10/lado", rest:90, muscles:{Glúteos:1,Cuádriceps:.6,Isquios:.25}, url:"https://www.youtube.com/results?search_query=bulgarian+split+squat+glute+bias+proper+form"},
+  {name:"Goblet Squat", block:"Strength", sets:3, reps:"10–12", rest:75, muscles:{Cuádriceps:1,Glúteos:.6}, url:"https://www.youtube.com/results?search_query=goblet+squat+proper+form"},
+  {name:"Banded Seated Abduction", block:"Strength", sets:2, reps:"15–20", rest:45, muscles:{Glúteos:1}, url:"https://www.youtube.com/results?search_query=banded+seated+hip+abduction"},
+  {name:"Reverse Lunge", block:"Sculpt", sets:3, reps:"10/lado", rest:0, muscles:{Glúteos:1,Cuádriceps:.6}, url:"https://www.youtube.com/results?search_query=reverse+lunge+dumbbell+proper+form"},
+  {name:"DB Sumo Squat", block:"Sculpt", sets:3, reps:"12", rest:0, muscles:{Glúteos:1,Cuádriceps:.5}, url:"https://www.youtube.com/results?search_query=dumbbell+sumo+squat+proper+form"},
+  {name:"Banded Lateral Walk", block:"Sculpt", sets:3, reps:"12/lado", rest:0, muscles:{Glúteos:1}, url:"https://www.youtube.com/results?search_query=banded+lateral+walk+glutes"},
+  {name:"Glute Bridge + Band Abduction", block:"Sculpt", sets:3, reps:"15", rest:0, muscles:{Glúteos:1}, url:"https://www.youtube.com/results?search_query=glute+bridge+band+abduction"},
+  {name:"Frog Pumps", block:"Sculpt", sets:3, reps:"20", rest:60, muscles:{Glúteos:1}, url:"https://www.youtube.com/results?search_query=frog+pumps+glutes+form"},
+  {name:"Treadmill Finisher", block:"Conditioning", sets:1, reps:"6 min", rest:0, muscles:{Cardio:1}, url:"https://www.youtube.com/results?search_query=treadmill+intervals+beginner"}
+ ]},
+{
+ day:"Martes", key:2, title:"Upper · Shoulder & Arms", subtitle:"Hombros + bíceps + tríceps", duration:"55–65 min",
+ exercises:[
+  {name:"DB Shoulder Press", block:"Strength", sets:3, reps:"8–10", rest:75, muscles:{Hombros:1,Tríceps:.5}, url:"https://www.youtube.com/results?search_query=dumbbell+shoulder+press+proper+form"},
+  {name:"One-arm DB Row", block:"Strength", sets:3, reps:"10/lado", rest:75, muscles:{Espalda:1,Bíceps:.5}, url:"https://www.youtube.com/results?search_query=one+arm+dumbbell+row+proper+form"},
+  {name:"DB Floor Press", block:"Strength", sets:3, reps:"8–12", rest:60, muscles:{Pecho:1,Tríceps:.5,Hombros:.25}, url:"https://www.youtube.com/results?search_query=dumbbell+floor+press+proper+form"},
+  {name:"DB Rear Delt Fly", block:"Strength", sets:3, reps:"12–15", rest:60, muscles:{Hombros:1,Espalda:.25}, url:"https://www.youtube.com/results?search_query=dumbbell+rear+delt+fly+proper+form"},
+  {name:"DB Lateral Raise", block:"Strength", sets:3, reps:"12–15", rest:60, muscles:{Hombros:1}, url:"https://www.youtube.com/results?search_query=dumbbell+lateral+raise+proper+form"},
+  {name:"Alternating DB Curl", block:"Strength", sets:3, reps:"10–12", rest:60, muscles:{Bíceps:1}, url:"https://www.youtube.com/results?search_query=alternating+dumbbell+curl+proper+form"},
+  {name:"DB Overhead Triceps Extension", block:"Strength", sets:3, reps:"10–12", rest:60, muscles:{Tríceps:1}, url:"https://www.youtube.com/results?search_query=dumbbell+overhead+triceps+extension+proper+form"},
+  {name:"DB Hammer Curl", block:"Sculpt", sets:2, reps:"12", rest:0, muscles:{Bíceps:1}, url:"https://www.youtube.com/results?search_query=dumbbell+hammer+curl+proper+form"},
+  {name:"Band Lateral Raise", block:"Sculpt", sets:2, reps:"12–15", rest:0, muscles:{Hombros:1}, url:"https://www.youtube.com/results?search_query=band+lateral+raise"},
+  {name:"Band Triceps Extension", block:"Sculpt", sets:2, reps:"15", rest:0, muscles:{Tríceps:1}, url:"https://www.youtube.com/results?search_query=resistance+band+triceps+extension"},
+  {name:"DB Front Rack March", block:"Sculpt", sets:2, reps:"30 s", rest:60, muscles:{Core:1,Hombros:.25}, url:"https://www.youtube.com/results?search_query=dumbbell+front+rack+march"}
+ ]},
+{
+ day:"Miércoles", key:3, title:"Zone 2 + Core", subtitle:"Base cardiovascular + core", duration:"45–55 min",
+ exercises:[
+  {name:"Treadmill Zone 2", block:"Conditioning", sets:1, reps:"30–40 min", rest:0, muscles:{Cardio:1}, url:"https://www.youtube.com/results?search_query=zone+2+cardio+explained"},
+  {name:"Dead Bug", block:"Core", sets:3, reps:"10/lado", rest:0, muscles:{Core:1}, url:"https://www.youtube.com/results?search_query=dead+bug+exercise+proper+form"},
+  {name:"Plank DB Drag", block:"Core", sets:3, reps:"8/lado", rest:0, muscles:{Core:1,Hombros:.25}, url:"https://www.youtube.com/results?search_query=plank+dumbbell+drag+proper+form"},
+  {name:"Reverse Crunch", block:"Core", sets:3, reps:"12", rest:0, muscles:{Core:1}, url:"https://www.youtube.com/results?search_query=reverse+crunch+proper+form"},
+  {name:"Side Plank", block:"Core", sets:3, reps:"25–30 s/lado", rest:60, muscles:{Core:1,Hombros:.2}, url:"https://www.youtube.com/results?search_query=side+plank+proper+form"}
+ ]},
+{
+ day:"Jueves", key:4, title:"Lower B · Glute + Hamstring", subtitle:"Glúteo + cadena posterior", duration:"60–65 min",
+ exercises:[
+  {name:"DB Romanian Deadlift", block:"Strength", sets:4, reps:"8–10", rest:105, muscles:{Isquios:1,Glúteos:1}, url:"https://www.youtube.com/results?search_query=dumbbell+romanian+deadlift+proper+form"},
+  {name:"DB Reverse Lunge · glute bias", block:"Strength", sets:3, reps:"8–10/lado", rest:90, muscles:{Glúteos:1,Cuádriceps:.5}, url:"https://www.youtube.com/results?search_query=reverse+lunge+glute+bias+dumbbells"},
+  {name:"B-stance RDL", block:"Strength", sets:3, reps:"10/lado", rest:75, muscles:{Glúteos:1,Isquios:1}, url:"https://www.youtube.com/results?search_query=b+stance+romanian+deadlift+dumbbell"},
+  {name:"DB Glute Bridge + Band", block:"Strength", sets:3, reps:"10–12", rest:60, muscles:{Glúteos:1}, url:"https://www.youtube.com/results?search_query=dumbbell+glute+bridge+resistance+band"},
+  {name:"DB Lateral Lunge", block:"Sculpt", sets:3, reps:"10/lado", rest:0, muscles:{Glúteos:1,Cuádriceps:.5}, url:"https://www.youtube.com/results?search_query=dumbbell+lateral+lunge+proper+form"},
+  {name:"Banded Kickback", block:"Sculpt", sets:3, reps:"15/lado", rest:0, muscles:{Glúteos:1}, url:"https://www.youtube.com/results?search_query=resistance+band+glute+kickback"},
+  {name:"Sumo Squat", block:"Sculpt", sets:3, reps:"12", rest:0, muscles:{Glúteos:1,Cuádriceps:.5}, url:"https://www.youtube.com/results?search_query=sumo+squat+dumbbell+proper+form"},
+  {name:"Banded Abduction", block:"Sculpt", sets:3, reps:"15/lado", rest:0, muscles:{Glúteos:1}, url:"https://www.youtube.com/results?search_query=resistance+band+hip+abduction"},
+  {name:"Glute Bridge Pulses", block:"Sculpt", sets:3, reps:"20", rest:60, muscles:{Glúteos:1}, url:"https://www.youtube.com/results?search_query=glute+bridge+pulses"},
+  {name:"Band Lateral Raise", block:"Sculpt", sets:2, reps:"15–20", rest:0, muscles:{Hombros:1}, url:"https://www.youtube.com/results?search_query=band+lateral+raise"},
+  {name:"Band Pull-apart", block:"Sculpt", sets:2, reps:"15–20", rest:45, muscles:{Hombros:1,Espalda:.25}, url:"https://www.youtube.com/results?search_query=band+pull+apart+proper+form"}
+ ]},
+{
+ day:"Viernes", key:5, title:"Full Body · Functional", subtitle:"Glúteos + hombros/brazos + cardio", duration:"50–60 min",
+ exercises:[
+  {name:"DB Romanian Deadlift", block:"Functional", sets:3, reps:"10", rest:0, muscles:{Glúteos:1,Isquios:1}, url:"https://www.youtube.com/results?search_query=dumbbell+romanian+deadlift+proper+form"},
+  {name:"DB Bent-over Row", block:"Functional", sets:3, reps:"10", rest:0, muscles:{Espalda:1,Bíceps:.5}, url:"https://www.youtube.com/results?search_query=dumbbell+bent+over+row+proper+form"},
+  {name:"Reverse Lunge + Knee Drive", block:"Functional", sets:3, reps:"8/lado", rest:0, muscles:{Glúteos:1,Cuádriceps:.5,Core:.25}, url:"https://www.youtube.com/results?search_query=reverse+lunge+knee+drive+dumbbell"},
+  {name:"DB Push Press", block:"Functional", sets:3, reps:"10", rest:75, muscles:{Hombros:1,Tríceps:.5}, url:"https://www.youtube.com/results?search_query=dumbbell+push+press+proper+form"},
+  {name:"DB Bulgarian Split Squat", block:"Functional", sets:3, reps:"8/lado", rest:0, muscles:{Glúteos:1,Cuádriceps:.6}, url:"https://www.youtube.com/results?search_query=dumbbell+bulgarian+split+squat+proper+form"},
+  {name:"DB Lateral Raise", block:"Functional", sets:3, reps:"12", rest:0, muscles:{Hombros:1}, url:"https://www.youtube.com/results?search_query=dumbbell+lateral+raise+proper+form"},
+  {name:"Banded Hip Abduction", block:"Functional", sets:3, reps:"15/lado", rest:0, muscles:{Glúteos:1}, url:"https://www.youtube.com/results?search_query=banded+hip+abduction+glutes"},
+  {name:"DB Hammer Curl", block:"Functional", sets:3, reps:"10", rest:0, muscles:{Bíceps:1}, url:"https://www.youtube.com/results?search_query=dumbbell+hammer+curl+proper+form"},
+  {name:"DB Triceps Kickback", block:"Functional", sets:3, reps:"12", rest:60, muscles:{Tríceps:1}, url:"https://www.youtube.com/results?search_query=dumbbell+triceps+kickback+proper+form"},
+  {name:"Conditioning Circuit", block:"Conditioning", sets:3, reps:"40/20 × 5 estaciones", rest:60, muscles:{Cardio:1,Glúteos:.25,Hombros:.25}, url:"https://www.youtube.com/results?search_query=dumbbell+conditioning+circuit+full+body"}
+ ]}
+];
+
+const STORE="flor_ss_v2_logs";
+const getLogs=()=>JSON.parse(localStorage.getItem(STORE)||"[]");
+const setLogs=(v)=>localStorage.setItem(STORE,JSON.stringify(v));
+const todayISO=()=>new Date().toISOString().slice(0,10);
+const fmt=n=>Number(n||0).toLocaleString("es-MX",{maximumFractionDigits:0});
+const blockWeight=b=>b==="Strength"?1:(b==="Sculpt"||b==="Functional"?0.6:(b==="Core"?0.5:0.25));
+
+let activeProgram=PROGRAM[Math.max(0,Math.min(4,new Date().getDay()-1))] || PROGRAM[0];
+let timerId=null, timerLeft=0;
+
+function blockClass(b){
+  if(b==="Strength") return "strength";
+  if(b==="Sculpt"||b==="Functional") return "sculpt";
+  if(b==="Core") return "core";
+  return "conditioning";
+}
+function lastExercise(name){
+  const logs=getLogs().slice().sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
+  for(const l of logs){
+    const ex=(l.exercises||[]).find(e=>e.name===name && e.sets?.some(s=>s.done));
+    if(ex) return {date:l.date,sets:ex.sets.filter(s=>s.done)};
+  }
+  return null;
+}
+function bestSetText(ex){
+  if(!ex?.sets?.length) return "Sin registro previo";
+  const vals=ex.sets.map(s=>`${s.weight||0} kg × ${s.reps||0}`).join(" · ");
+  return `${ex.date}: ${vals}`;
+}
+function todayHeader(){
+  const d=new Date(), dow=d.getDay();
+  const p=PROGRAM.find(x=>x.key===dow);
+  return p||PROGRAM[0];
+}
+function renderToday(p=activeProgram){
+  activeProgram=p;
+  const c=document.getElementById("todayContent");
+  c.innerHTML=`
+   <div class="card hero">
+    <div class="space">
+      <div>
+        <div class="small">ENTRENAMIENTO</div>
+        <h2 style="margin:3px 0 4px">${p.day} · ${p.title}</h2>
+        <div class="muted">${p.subtitle} · ${p.duration}</div>
+      </div>
+      <label style="color:#d4d4d8;min-width:120px">Fecha<input id="workoutDate" type="date" value="${todayISO()}"></label>
+    </div>
+    <div style="margin-top:12px">
+      <span class="badge">Strength</span><span class="badge">Sculpt</span><span class="badge">Cardio</span>
+    </div>
+   </div>
+   <div class="card">
+    <div class="space">
+      <label style="min-width:220px">Cambiar sesión<select id="sessionSelect"></select></label>
+      <button class="btn good" id="saveWorkout">Guardar sesión</button>
+    </div>
+   </div>
+   <div id="exerciseCards" class="stack"></div>`;
+  const sel=document.getElementById("sessionSelect");
+  PROGRAM.forEach((x,i)=>sel.add(new Option(`${x.day} · ${x.title}`,i,x===p,x===p)));
+  sel.onchange=e=>renderToday(PROGRAM[+e.target.value]);
+
+  const wrap=document.getElementById("exerciseCards");
+  p.exercises.forEach((e,ei)=>{
+    const prev=lastExercise(e.name);
+    const card=document.createElement("div");
+    card.className="card exercise";
+    card.dataset.ei=ei;
+    card.innerHTML=`
+      <div class="ex-head">
+        <div class="space">
+          <div>
+            <div class="row"><h3>${e.name}</h3><span class="badge ${blockClass(e.block)}">${e.block}</span></div>
+            <div class="small" style="margin-top:5px">${e.sets} serie(s) · ${e.reps} ${e.rest?`· descanso ${e.rest}s`:""}</div>
+          </div>
+          <a class="btn ghost smallbtn ref" href="${e.url}" target="_blank" rel="noopener">▶ Técnica</a>
+        </div>
+        <div>${Object.keys(e.muscles).map(m=>`<span class="badge">${m}</span>`).join("")}</div>
+        <div class="previous"><div class="small">Último registro</div><strong style="font-size:12px">${bestSetText(prev)}</strong></div>
+      </div>
+      <div class="ex-body">
+        <div class="set-head"><div>✓</div><div>Peso total</div><div>Reps</div><div>RIR</div><div></div></div>
+        <div class="sets"></div>
+      </div>`;
+    const sets=card.querySelector(".sets");
+    for(let s=1;s<=e.sets;s++){
+      const pr=prev?.sets?.[s-1];
+      sets.insertAdjacentHTML("beforeend",`
+       <div class="set-row">
+        <div class="check"><input type="checkbox" data-field="done" data-set="${s}"></div>
+        <input type="number" min="0" step="0.5" data-field="weight" data-set="${s}" placeholder="${pr?.weight??"kg"}">
+        <input type="number" min="0" step="1" data-field="reps" data-set="${s}" placeholder="${pr?.reps??"reps"}">
+        <input type="number" min="0" max="10" step="1" data-field="rir" data-set="${s}" placeholder="${pr?.rir??"RIR"}">
+        <button class="btn secondary smallbtn timerBtn" title="Iniciar descanso">${e.rest?e.rest+"s":"→"}</button>
+       </div>`);
+    }
+    card.querySelectorAll('input[type="checkbox"]').forEach(ch=>ch.onchange=()=>{
+      ch.closest(".set-row").classList.toggle("done",ch.checked);
+      if(ch.checked && e.rest) startTimer(e.rest);
+    });
+    card.querySelectorAll(".timerBtn").forEach(b=>b.onclick=()=>e.rest?startTimer(e.rest):null);
+    wrap.appendChild(card);
+  });
+  document.getElementById("saveWorkout").onclick=saveCurrentWorkout;
+}
+function collect(){
+ const exs=[];
+ document.querySelectorAll("#exerciseCards .exercise").forEach((card,ei)=>{
+   const def=activeProgram.exercises[ei], sets=[];
+   card.querySelectorAll(".set-row").forEach(r=>{
+     const val=f=>r.querySelector(`[data-field="${f}"]`);
+     sets.push({done:val("done").checked,weight:+val("weight").value||0,reps:+val("reps").value||0,rir:+val("rir").value||0});
+   });
+   exs.push({...def,sets});
+ });
+ return {id:Date.now(),date:document.getElementById("workoutDate").value,day:activeProgram.day,title:activeProgram.title,exercises:exs};
+}
+function saveCurrentWorkout(){
+ const l=collect();
+ if(!l.exercises.some(e=>e.sets.some(s=>s.done))){alert("Marca al menos una serie como completada.");return;}
+ const logs=getLogs();logs.push(l);setLogs(logs);
+ alert("Sesión guardada ✅");
+ renderToday(activeProgram); renderProgress(); renderHistory();
+}
+function startTimer(sec){
+ stopTimer();timerLeft=sec;drawTimer();
+ document.getElementById("restTimer").classList.add("active");
+ timerId=setInterval(()=>{timerLeft--;drawTimer();if(timerLeft<=0){stopTimer();navigator.vibrate?.(150);}},1000);
+}
+function drawTimer(){document.getElementById("timerNum").textContent=`${String(Math.floor(timerLeft/60)).padStart(2,"0")}:${String(timerLeft%60).padStart(2,"0")}`;}
+function addTimer(s){timerLeft+=s;drawTimer();}
+function stopTimer(){if(timerId)clearInterval(timerId);timerId=null;document.getElementById("restTimer").classList.remove("active");}
+
+function monday(dateStr){
+ const d=new Date(dateStr+"T12:00:00"), offset=(d.getDay()+6)%7;
+ d.setDate(d.getDate()-offset);return d;
+}
+function iso(d){return d.toISOString().slice(0,10)}
+function periodLogs(ref){
+ const a=monday(ref), b=new Date(a);b.setDate(b.getDate()+6);
+ const logs=getLogs(), m=ref.slice(0,7);
+ return {week:logs.filter(l=>l.date>=iso(a)&&l.date<=iso(b)),month:logs.filter(l=>l.date.startsWith(m)),a,b};
+}
+function stats(logs){
+ const st={}; let conditioning=0;
+ logs.forEach(l=>{
+   const touched={};
+   l.exercises.forEach(e=>{
+     const done=e.sets?.filter(s=>s.done)||[];
+     if(!done.length)return;
+     if(e.block==="Conditioning")conditioning++;
+     const bw=blockWeight(e.block);
+     Object.entries(e.muscles||{}).forEach(([m,c])=>{
+       st[m]??={freq:new Set(),sets:0,vol:0,strengthVol:0};
+       st[m].freq.add(l.date); touched[m]=1;
+       done.forEach(s=>{
+         st[m].sets+=bw*c;
+         st[m].vol+=(s.weight||0)*(s.reps||0)*bw*c;
+         if(e.block==="Strength")st[m].strengthVol+=(s.weight||0)*(s.reps||0)*c;
+       });
+     });
+   });
+ });
+ Object.values(st).forEach(x=>x.frequency=x.freq.size);
+ return {muscles:st,conditioning};
+}
+function muscleTable(st){
+ const arr=Object.entries(st).sort((a,b)=>b[1].sets-a[1].sets);
+ if(!arr.length)return `<div class="small">Sin registros todavía.</div>`;
+ const mx=Math.max(...arr.map(x=>x[1].sets),1);
+ return `<div class="muscle-row small" style="font-weight:800"><div>Grupo</div><div>Freq.</div><div>Series*</div><div></div></div>`+
+ arr.map(([m,x])=>`<div class="muscle-row"><div><strong>${m}</strong></div><div>${x.frequency}×</div><div>${x.sets.toFixed(1)}</div><div><div class="bar"><span style="width:${Math.max(3,x.sets/mx*100)}%"></span></div><div class="small" style="margin-top:4px">${fmt(x.vol)} kg-reps</div></div></div>`).join("");
+}
+function renderProgress(){
+ const ref=document.getElementById("progressDate")?.value||todayISO();
+ const p=periodLogs(ref), ws=stats(p.week), ms=stats(p.month);
+ document.getElementById("periodLabel").textContent=`Semana ${iso(p.a)} → ${iso(p.b)}`;
+ document.getElementById("mSessions").textContent=p.week.length;
+ document.getElementById("mStrength").textContent=fmt(Object.values(ws.muscles).reduce((a,x)=>a+x.strengthVol,0));
+ document.getElementById("mCardio").textContent=ws.conditioning;
+ const priorities=[["Glúteos","16–20"],["Hombros","10–14"],["Bíceps","6–10"],["Tríceps","6–10"]];
+ document.getElementById("priorityCards").innerHTML=priorities.map(([m,target])=>{
+   const x=ws.muscles[m]||{frequency:0,sets:0};
+   return `<div class="card"><div class="small">${m} · objetivo ${target}</div><div class="metric">${x.sets.toFixed(1)}</div><div class="small">series estimadas · frecuencia ${x.frequency||0}×</div></div>`;
+ }).join("");
+ document.getElementById("weekMuscles").innerHTML=muscleTable(ws.muscles);
+ document.getElementById("monthMuscles").innerHTML=muscleTable(ms.muscles);
+ document.getElementById("prs").innerHTML=renderPRs(getLogs());
+}
+function renderPRs(logs){
+ const best={};
+ logs.forEach(l=>l.exercises.forEach(e=>{
+   if(e.block!=="Strength")return;
+   (e.sets||[]).filter(s=>s.done&&s.weight>0&&s.reps>0).forEach(s=>{
+     const e1rm=s.weight*(1+s.reps/30);
+     if(!best[e.name]||e1rm>best[e.name].e1rm)best[e.name]={e1rm,weight:s.weight,reps:s.reps,date:l.date};
+   });
+ }));
+ const arr=Object.entries(best).sort((a,b)=>b[1].e1rm-a[1].e1rm);
+ if(!arr.length)return `<div class="small">Aparecerán después de registrar tus series Strength.</div>`;
+ return arr.slice(0,8).map(([n,x])=>`<div class="space" style="padding:8px 0;border-bottom:1px solid var(--line)"><div><strong>${n}</strong><div class="small">${x.date}</div></div><div style="text-align:right"><strong>${x.weight} kg × ${x.reps}</strong><div class="small">e1RM ${x.e1rm.toFixed(1)} kg</div></div></div>`).join("");
+}
+function renderPlan(){
+ const c=document.getElementById("planContent");
+ c.innerHTML=PROGRAM.map(p=>`<div class="card"><div class="space"><div><div class="small">${p.day}</div><h3 style="margin-top:3px">${p.title}</h3><div class="small">${p.subtitle} · ${p.duration}</div></div><button class="btn secondary smallbtn openPlan" data-key="${p.key}">Abrir</button></div></div>`).join("");
+ c.querySelectorAll(".openPlan").forEach(b=>b.onclick=()=>{
+   renderToday(PROGRAM.find(p=>p.key==b.dataset.key)); switchTab("today");
+ });
+}
+function renderHistory(){
+ const c=document.getElementById("historyContent"), logs=getLogs().slice().sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
+ if(!logs.length){c.innerHTML=`<div class="small">Aún no hay sesiones guardadas.</div>`;return;}
+ c.innerHTML=`<div class="timeline">`+logs.map(l=>{
+   const done=l.exercises.reduce((a,e)=>a+(e.sets||[]).filter(s=>s.done).length,0);
+   return `<div class="timeline-item"><div class="space"><div><strong>${l.date} · ${l.day}</strong><div class="small">${l.title} · ${done} series completadas</div></div><button class="btn ghost smallbtn del" data-id="${l.id}">Eliminar</button></div></div>`;
+ }).join("")+`</div>`;
+ c.querySelectorAll(".del").forEach(b=>b.onclick=()=>{
+   if(confirm("¿Eliminar esta sesión?")){setLogs(getLogs().filter(x=>x.id!=b.dataset.id));renderHistory();renderProgress();}
+ });
+}
+function switchTab(id){
+ document.querySelectorAll(".panel").forEach(x=>x.classList.toggle("active",x.id===id));
+ document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("active",x.dataset.tab===id));
+ if(id==="progress")renderProgress();
+ if(id==="history")renderHistory();
+}
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
+document.getElementById("progressDate").value=todayISO();
+document.getElementById("progressDate").onchange=renderProgress;
+document.getElementById("exportBtn").onclick=()=>{
+ const blob=new Blob([JSON.stringify(getLogs(),null,2)],{type:"application/json"});
+ const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="flor-strength-sculpt-v2-backup.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);
+};
+document.getElementById("importFile").onchange=async e=>{
+ const f=e.target.files[0];if(!f)return;
+ try{const v=JSON.parse(await f.text());if(!Array.isArray(v))throw 0;setLogs(v);renderProgress();renderHistory();alert("Respaldo importado ✅");}catch{alert("Ese archivo no parece un respaldo válido.");}
+};
+document.getElementById("clearBtn").onclick=()=>{if(confirm("¿Borrar todos los registros guardados en este navegador?")){localStorage.removeItem(STORE);renderProgress();renderHistory();}};
+renderToday(todayHeader());renderPlan();renderProgress();renderHistory();
+
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}
+</script>
+</body>
+</html>
